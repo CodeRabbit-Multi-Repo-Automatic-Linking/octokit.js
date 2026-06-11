@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Octokit, App, OAuthApp, RequestError } from "../src/index.ts";
+import { Octokit, App, OAuthApp, RequestError, VERSION } from "../src/index.ts";
 
 describe("Smoke tests", () => {
   it("Octokit is a function", () => {
@@ -53,6 +53,11 @@ describe("Smoke tests", () => {
     });
 
     expect(app.octokit.request).toBeInstanceOf(Function);
+  });
+
+  it("VERSION is a string", () => {
+    expect(typeof VERSION).toBe("string");
+    expect(VERSION.length).toBeGreaterThan(0);
   });
 
   it("RequestError inherits from Error", () => {
