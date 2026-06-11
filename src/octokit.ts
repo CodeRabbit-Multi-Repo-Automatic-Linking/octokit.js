@@ -7,6 +7,7 @@ import { throttling } from "@octokit/plugin-throttling";
 
 import { VERSION } from "./version.js";
 import type { EndpointDefaults } from "@octokit/types";
+import type { ThrottlingOptions } from "@octokit/plugin-throttling";
 
 export { RequestError } from "@octokit/request-error";
 export type {
@@ -25,7 +26,7 @@ export const Octokit = OctokitCore.plugin(
   throttle: {
     onRateLimit,
     onSecondaryRateLimit,
-  },
+  } satisfies Pick<ThrottlingOptions, "onRateLimit" | "onSecondaryRateLimit">,
 });
 
 export type Octokit = InstanceType<typeof Octokit>;
@@ -35,12 +36,13 @@ function onRateLimit(
   retryAfter: number,
   options: Required<EndpointDefaults>,
   octokit: InstanceType<typeof OctokitCore>,
+  retryCount: number,
 ) {
   octokit.log.warn(
     `Request quota exhausted for request ${options.method} ${options.url}`,
   );
 
-  if (options.request.retryCount === 0) {
+  if (retryCount === 0) {
     // only retries once
     octokit.log.info(`Retrying after ${retryAfter} seconds!`);
     return true;
@@ -52,12 +54,13 @@ function onSecondaryRateLimit(
   retryAfter: number,
   options: Required<EndpointDefaults>,
   octokit: InstanceType<typeof OctokitCore>,
+  retryCount: number,
 ) {
   octokit.log.warn(
     `SecondaryRateLimit detected for request ${options.method} ${options.url}`,
   );
 
-  if (options.request.retryCount === 0) {
+  if (retryCount === 0) {
     // only retries once
     octokit.log.info(`Retrying after ${retryAfter} seconds!`);
     return true;
