@@ -17,3 +17,8 @@ export type {
 } from "@octokit/plugin-paginate-rest";
 export type { ThrottlingOptions } from "@octokit/plugin-throttling";
 export type { RetryOptions } from "@octokit/plugin-retry";
+export type {
+  EmitterWebhookEvent,
+  EmitterWebhookEventName,
+  WebhookEventHandlerError,
+} from "@octokit/webhooks";
